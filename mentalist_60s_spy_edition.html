@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Velvet Oracle | 1960 Spy Mission</title>
-<link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icono.jpg">
-<meta name="theme-color" content="#c5a059">
+    <meta name="theme-color" content="#c5a059">
     <style>
         :root {
             --navy: #020c1b; --gold: #c5a059; --neon-blue: #00d4ff; --white: #fdf6e3;
@@ -75,7 +75,7 @@
 
         /* MODAL */
         .modal { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(2, 12, 27, 0.98); justify-content: center; align-items: center; }
-        .modal-content { background: #0a192f; border: 1px solid var(--gold); width: 95%; max-width: 580px; padding: 30px; text-align: center; }
+        .modal-content { background: #0a192f; border: 1px solid var(--gold); width: 95%; max-width: 580px; padding: 30px; text-align: center; max-height: 90vh; overflow-y: auto; }
         .lesson-img { width: 100%; height: 240px; border: 1px solid rgba(197, 160, 89, 0.3); margin-bottom: 20px; background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #000; }
         
         .opt-btn { display: block; width: 100%; padding: 14px; margin: 8px 0; background: transparent; border: 1px solid var(--gold); color: var(--gold); cursor: pointer; font-family: inherit; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; transition: 0.3s; }
@@ -110,6 +110,7 @@
         <div class="mission-text">
             <p id="agent-display" style="color: var(--gold); font-weight: bold; text-transform: uppercase;"></p>
             <p><strong>REPORTE DE VUELO:</strong> Cruzando el Atlántico. Utilice el tiempo de cabina para perfeccionar su análisis de comportamiento. New York no perdona a los aficionados.</p>
+            <button class="opt-btn" style="width:auto; padding: 5px 15px; font-size:0.6rem; border:none; color:#666;" onclick="clearAgencyData()">ELIMINAR CREDENCIALES</button>
         </div>
     </div>
     <div class="flight-itinerary">
@@ -143,13 +144,14 @@
         { t: "Pre-ajuste (Cortejo)", d: "Acomodarse la ropa o el cabello son gestos de preparación. Exponer las muñecas indica una apertura al contacto.", q: "Ajustarse la corbata o el reloj indica:", o: ["Preparación e interés", "Nerviosismo por falta de tiempo"], a: 0 },
         { t: "La Cifra 4", d: "La pierna cruzada sobre la rodilla en ángulo recto es una postura de bloqueo competitivo.", q: "¿Qué actitud revela esta posición?", o: ["Competitividad y terquedad", "Deseo de cooperar"], a: 0 },
         { t: "Geometría Social", d: "El ángulo de 45 grados es diplomacia pura. La confrontación directa es un choque de trenes.", q: "Situarse frente a frente suele ser:", o: ["Confrontativo", "Colaborativo"], a: 0 },
-        { t: "Mobiliario de Poder", d: "El escritorio es una frontera. Su tamaño y altura dictan la jerarquía de la reunión.", q: "Un escritorio de gran tamaño sirve para:", o: ["Establecer autoridad y distancia", "Facilitar el intercambio"], a: 0 },
+        { t: "Mobiliario de Poder", d: "El escritorio es una frontera. Su tamaño y altura dictan la jerarquía de la reunión.", q: "Un escritorio de gran tamaño sirve para:", o: ["Establecer autoridad y distancia", "Facilitar el intercambio"], a: 1 },
         { t: "Destino: New York", d: "Descenso iniciado. El villano le espera en el club. Su entrenamiento ha terminado, Operativo.", q: "¿Cuál es el núcleo del Oráculo de Terciopelo?", o: ["La observación clínica del gesto", "La intuición sin base"], a: 0 }
     ];
 
     let currentLvl = 1;
     let agentData = null;
 
+    // --- AUTENTICACIÓN ---
     function requestAccess() {
         const u = document.getElementById('user-input').value;
         const p = document.getElementById('pass-input').value;
@@ -179,6 +181,14 @@
         }
     }
 
+    function clearAgencyData() {
+        if(confirm("¿Desea borrar sus credenciales y el progreso del vuelo?")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
+    // --- LÓGICA DE MAPA ---
     function renderPath() {
         const pathLine = document.getElementById('path-line');
         document.querySelectorAll('.checkpoint').forEach(e => e.remove());
@@ -204,7 +214,7 @@
         const mb = document.getElementById('m-body');
         mb.innerHTML = `
             <div class="lesson-img" style="background-image: url('${id}.jpg')"></div>
-            <h2 style="color:var(--gold); letter-spacing:3px;">LECCIÓN ${id}</h2>
+            <h2 style="color:var(--gold); letter-spacing:3px;">INFORME PISO ${id}</h2>
             <div style="text-align:left; border-left:1px solid var(--gold); padding-left:20px; margin-bottom:20px;">
                 <p style="font-size:0.85rem; line-height:1.6;">${c.d}</p>
             </div>
@@ -226,7 +236,15 @@
             document.getElementById('modal').style.display = 'none';
         } else alert("Error de análisis. El objetivo ha detectado su presencia.");
     }
+
+    // COMPROBACIÓN AUTOMÁTICA AL CARGAR
+    window.onload = () => {
+        const lastAgent = Object.keys(localStorage).find(key => key.startsWith('oracle_agent_'));
+        if (lastAgent) {
+            const name = lastAgent.replace('oracle_agent_', '');
+            startMission(name);
+        }
+    };
 </script>
 </body>
-
 </html>
