@@ -1,12 +1,13 @@
 {
-  "name": "The Velvet Oracle: 1960 Spy Mission",
+  "lang": "es",
+  "name": "The Velvet Oracle Spy Mission",
   "short_name": "Velvet Oracle",
   "description": "Plataforma de entrenamiento de élite para operativos de campo. Perfecciona el análisis del lenguaje no verbal en tu ruta hacia NYC.",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#020c1b",
   "theme_color": "#c5a059",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "cabecera.jpg",
