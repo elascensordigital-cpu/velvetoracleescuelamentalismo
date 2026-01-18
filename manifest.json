@@ -3,23 +3,29 @@
   "name": "The Velvet Oracle Spy Mission",
   "short_name": "Velvet Oracle",
   "description": "Plataforma de entrenamiento de élite para operativos de campo. Perfecciona el análisis del lenguaje no verbal en tu ruta hacia NYC.",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#020c1b",
   "theme_color": "#c5a059",
   "icons": [
     {
-      "src": "cabecera.jpg",
+      "src": "icono.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "cabecera.jpg",
+      "src": "icono.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "icono.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
