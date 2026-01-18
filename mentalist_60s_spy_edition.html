@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Velvet Oracle | 1960 Spy Mission</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c5a059">
+    <style>
+        :root {
+            --navy: #020c1b; --gold: #c5a059; --neon-blue: #00d4ff; --white: #fdf6e3;
+        }
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Optima', 'Segoe UI', 'Courier New', monospace;
+            background: var(--navy); color: var(--white); overflow: hidden;
+        }
+
+        /* PANTALLA DE ACCESO GLAM */
+        #auth-screen {
+            position: fixed; inset: 0; background: var(--navy); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .auth-box {
+            background: rgba(10, 25, 47, 0.98); border: 1px solid var(--gold);
+            padding: 40px; width: 90%; max-width: 400px; text-align: center;
+            box-shadow: 0 0 50px rgba(197, 160, 89, 0.2);
+        }
+        input {
+            width: 100%; padding: 12px; margin: 10px 0; background: transparent;
+            border: none; border-bottom: 1px solid var(--gold); color: white; 
+            box-sizing: border-box; text-align: center; letter-spacing: 2px;
+        }
+
+        /* PANTALLA DE JUEGO */
+        #game-screen { display: none; height: 100%; }
+        .stars-bg { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at bottom, #112240 0%, #020c1b 100%); }
+
+        .main-mission-control {
+            display: flex; flex-direction: column; align-items: center; padding: 20px;
+            height: 100vh; box-sizing: border-box; text-align: center;
+        }
+
+        .agents-frame {
+            width: 100%; max-width: 480px; height: 240px; border: 1px solid var(--gold);
+            background: url('cabecera.jpg') center/cover no-repeat, #000; 
+            margin-bottom: 20px; outline: 10px solid rgba(197, 160, 89, 0.05);
+        }
+
+        .mission-text {
+            max-width: 650px; background: rgba(10, 25, 47, 0.85); padding: 25px;
+            border-left: 3px solid var(--gold); font-size: 0.9rem; line-height: 1.6;
+            letter-spacing: 0.5px;
+        }
+
+        /* ITINERARIO HORIZONTAL */
+        .flight-itinerary {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 150px;
+            background: rgba(0, 0, 0, 0.9); border-top: 1px solid var(--gold);
+            display: flex; align-items: center; padding: 0 40px; box-sizing: border-box; overflow-x: auto;
+        }
+        .path-line { position: relative; min-width: 1100px; height: 1px; background: rgba(197, 160, 89, 0.4); display: flex; justify-content: space-between; margin: 0 auto; }
+        
+        .checkpoint { 
+            width: 14px; height: 14px; background: var(--navy); border: 1px solid var(--gold); 
+            transform: translateY(-50%); cursor: pointer; position: relative; z-index: 50; 
+            transition: 0.3s;
+        }
+        .checkpoint.active { background: var(--gold); box-shadow: 0 0 15px var(--gold); transform: translateY(-50%) scale(1.3); }
+        .checkpoint::after { content: attr(data-label); position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--gold); font-weight: bold; }
+
+        #plane-container { position: absolute; top: -45px; left: 0%; width: 75px; height: 55px; transition: left 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95); z-index: 100; pointer-events: none; }
+        #plane-img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* MODAL */
+        .modal { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(2, 12, 27, 0.98); justify-content: center; align-items: center; }
+        .modal-content { background: #0a192f; border: 1px solid var(--gold); width: 95%; max-width: 580px; padding: 30px; text-align: center; }
+        .lesson-img { width: 100%; height: 240px; border: 1px solid rgba(197, 160, 89, 0.3); margin-bottom: 20px; background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #000; }
+        
+        .opt-btn { display: block; width: 100%; padding: 14px; margin: 8px 0; background: transparent; border: 1px solid var(--gold); color: var(--gold); cursor: pointer; font-family: inherit; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; transition: 0.3s; }
+        .opt-btn:hover { background: var(--gold); color: black; }
+        
+        .martini-btn { border-color: #666; color: #888; margin-top: 20px; font-style: italic; text-transform: none; }
+    </style>
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="auth-box" id="login-form">
+        <h2 style="color:var(--gold); letter-spacing: 5px;">THE VELVET ORACLE</h2>
+        <p style="font-size: 0.7rem; margin-bottom: 30px;">ESTABLISHED 1964 | LONDON - NYC</p>
+        <input type="text" id="user-input" placeholder="OPERATIVO">
+        <input type="password" id="pass-input" placeholder="PASSCODE">
+        <button class="opt-btn" onclick="requestAccess()">REGISTRAR IDENTIDAD</button>
+    </div>
+    <div class="auth-box" id="verify-form" style="display:none">
+        <h2 style="color:var(--gold)">VERIFICACIÓN</h2>
+        <p style="font-size:0.8rem">Transmisión interceptada. Introduzca el código.</p>
+        <input type="text" id="v-code" placeholder="CÓDIGO: 1960">
+        <button class="opt-btn" onclick="completeAuth()">CONFIRMAR VUELO</button>
+    </div>
+</div>
+
+<div id="game-screen">
+    <div class="stars-bg"></div>
+    <div class="main-mission-control">
+        <h1 style="color:var(--gold); letter-spacing: 8px; font-size: 1.8rem; margin-top: 0;">THE VELVET ORACLE</h1>
+        <div class="agents-frame"></div>
+        <div class="mission-text">
+            <p id="agent-display" style="color: var(--gold); font-weight: bold; text-transform: uppercase;"></p>
+            <p><strong>REPORTE DE VUELO:</strong> Cruzando el Atlántico. Utilice el tiempo de cabina para perfeccionar su análisis de comportamiento. New York no perdona a los aficionados.</p>
+        </div>
+    </div>
+    <div class="flight-itinerary">
+        <div class="path-line" id="path-line">
+            <div id="plane-container"><img src="avion.png" id="plane-img"></div>
+            <div style="position:absolute; right:-50px; top:-45px; font-size:35px; filter: grayscale(1) sepia(1) hue-rotate(10deg);">🗽</div>
+        </div>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content" id="m-body"></div>
+</div>
+
+<script>
+    const chapters = [
+        { t: "La Regla de Tres", d: "Un operativo experto nunca confía en una señal aislada. Buscamos 'cúmulos': tres gestos que confirmen la misma intención.", q: "¿Cuál es el estándar de oro en el análisis?", o: ["Un único gesto delatador", "Un cúmulo de tres señales congruentes"], a: 1 },
+        { t: "Apertura de Palmas", d: "Las palmas visibles son la señal universal de desarme. Proyectan honestidad y control de la situación.", q: "Para desarmar a un contacto sospechoso:", o: ["Mostrar las palmas abiertas", "Mantener las manos en los bolsillos"], a: 0 },
+        { t: "El Reflejo de la Mirada", d: "La verdadera micro-expresión de alegría activa los ojos. Si el músculo orbicular no se contrae, es una máscara.", q: "¿Cómo identificamos una sonrisa falsa?", o: ["Ausencia de arrugas en los ojos", "Movimiento excesivo de labios"], a: 0 },
+        { t: "Barreras de Brazo", d: "El cruce de brazos es una barricada psicológica. Si se aprietan los puños, la defensiva se ha vuelto hostilidad.", q: "Generalmente, los brazos cruzados indican:", o: ["Resistencia o incomodidad", "Apertura al diálogo"], a: 0 },
+        { t: "Filtro Cultural", d: "Un gesto de cortesía en Londres puede ser una declaración de guerra en otra latitud. El contexto es el mapa.", q: "¿El lenguaje del cuerpo es universal?", o: ["No, está dictado por la cultura local", "Sí, es idéntico en todo el mundo"], a: 0 },
+        { t: "Dominio de Pulgares", d: "Los pulgares expuestos son proyecciones de estatus y confianza. Un operativo sabe quién manda por la posición de sus manos.", q: "Este gesto indica:", o: ["Confianza y superioridad", "Sumisión y duda"], a: 0 },
+        { t: "Micro-picores", d: "El engaño provoca una respuesta fisiológica en los capilares nasales. El instinto de tocarse la cara es el primer delator.", q: "Una señal clásica de ocultamiento es:", o: ["Tocarse la nariz o la boca", "Mantener los hombros caídos"], a: 0 },
+        { t: "Dilatación Pupilares", d: "Las pupilas no mienten. Se dilatan ante el deseo y se contraen ante el peligro o la hostilidad.", q: "Pupilas contraídas en un interrogatorio sugieren:", o: ["Hostilidad o rechazo", "Interés y agrado"], a: 0 },
+        { t: "Perímetro de Seguridad", d: "La zona íntima (45cm) es territorio soberano. Invadirla es una táctica de presión psicológica agresiva.", q: "¿Cuál es la distancia de seguridad social?", o: ["Entre 1.2 y 3.6 metros", "Menos de medio metro"], a: 0 },
+        { t: "Dirección de Pies", d: "Los pies son los miembros más honestos. Apuntan directamente hacia la intención real del sujeto.", q: "Si los pies apuntan hacia la salida:", o: ["Deseo inconsciente de abandonar el lugar", "Enfoque total en el operativo"], a: 0 },
+        { t: "Inclinación de Cabeza", d: "Ladear la cabeza expone la carótida, una señal de escucha y confianza. Asentir tres veces induce al objetivo a confesar.", q: "Ladear la cabeza hacia un lado significa:", o: ["Escucha atenta e interés", "Desinterés y aburrimiento"], a: 0 },
+        { t: "Rapport Especular", d: "Imitar sutilmente la postura del objetivo crea una conexión a nivel subconsciente. Se llama mimetismo táctico.", q: "¿Cuál es el fin del efecto espejo?", o: ["Generar sintonía y confianza", "Distraer al objetivo con movimientos"], a: 0 },
+        { t: "Tiempos muertes (Gafas)", d: "Manipular objetos como gafas es una técnica para ganar segundos preciosos antes de dar una respuesta.", q: "Morder la patilla de una gafa sugiere:", o: ["Duda o evaluación", "Decisión absoluta"], a: 0 },
+        { t: "Escudos Corporales", d: "Sostener carpetas o bolsos frente al pecho actúa como un chaleco antibalas emocional ante la inseguridad.", q: "Esta postura delata:", o: ["Inseguridad y autoprotección", "Dominio de la escena"], a: 0 },
+        { t: "Pre-ajuste (Cortejo)", d: "Acomodarse la ropa o el cabello son gestos de preparación. Exponer las muñecas indica una apertura al contacto.", q: "Ajustarse la corbata o el reloj indica:", o: ["Preparación e interés", "Nerviosismo por falta de tiempo"], a: 0 },
+        { t: "La Cifra 4", d: "La pierna cruzada sobre la rodilla en ángulo recto es una postura de bloqueo competitivo.", q: "¿Qué actitud revela esta posición?", o: ["Competitividad y terquedad", "Deseo de cooperar"], a: 0 },
+        { t: "Geometría Social", d: "El ángulo de 45 grados es diplomacia pura. La confrontación directa es un choque de trenes.", q: "Situarse frente a frente suele ser:", o: ["Confrontativo", "Colaborativo"], a: 0 },
+        { t: "Mobiliario de Poder", d: "El escritorio es una frontera. Su tamaño y altura dictan la jerarquía de la reunión.", q: "Un escritorio de gran tamaño sirve para:", o: ["Establecer autoridad y distancia", "Facilitar el intercambio"], a: 0 },
+        { t: "Destino: New York", d: "Descenso iniciado. El villano le espera en el club. Su entrenamiento ha terminado, Operativo.", q: "¿Cuál es el núcleo del Oráculo de Terciopelo?", o: ["La observación clínica del gesto", "La intuición sin base"], a: 0 }
+    ];
+
+    let currentLvl = 1;
+    let agentData = null;
+
+    function requestAccess() {
+        const u = document.getElementById('user-input').value;
+        const p = document.getElementById('pass-input').value;
+        if(!u || !p) return alert("Identificación requerida para el Oráculo.");
+        agentData = { name: u, pass: p, lvl: 1 };
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('verify-form').style.display = 'block';
+        alert("TRANSMISIÓN RECIBIDA: El código de acceso es 1960");
+    }
+
+    function completeAuth() {
+        if(document.getElementById('v-code').value === "1960") {
+            localStorage.setItem('oracle_agent_' + agentData.name, JSON.stringify(agentData));
+            startMission(agentData.name);
+        } else alert("Código de acceso denegado.");
+    }
+
+    function startMission(name) {
+        const saved = JSON.parse(localStorage.getItem('oracle_agent_' + name));
+        if(saved) {
+            agentData = saved;
+            currentLvl = saved.lvl;
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            document.getElementById('agent-display').innerText = "Operativo: " + agentData.name;
+            renderPath();
+        }
+    }
+
+    function renderPath() {
+        const pathLine = document.getElementById('path-line');
+        document.querySelectorAll('.checkpoint').forEach(e => e.remove());
+        
+        chapters.forEach((c, i) => {
+            const n = i + 1;
+            const dot = document.createElement('div');
+            dot.className = `checkpoint ${n <= currentLvl ? 'active' : ''}`;
+            dot.setAttribute('data-label', n);
+            dot.onclick = () => n === currentLvl ? openLesson(n) : null;
+            pathLine.appendChild(dot);
+        });
+
+        const pos = ((currentLvl - 1) / (chapters.length - 1)) * 100;
+        document.getElementById('plane-container').style.left = pos + "%";
+        
+        agentData.lvl = currentLvl;
+        localStorage.setItem('oracle_agent_' + agentData.name, JSON.stringify(agentData));
+    }
+
+    function openLesson(id) {
+        const c = chapters[id-1];
+        const mb = document.getElementById('m-body');
+        mb.innerHTML = `
+            <div class="lesson-img" style="background-image: url('${id}.jpg')"></div>
+            <h2 style="color:var(--gold); letter-spacing:3px;">LECCIÓN ${id}</h2>
+            <div style="text-align:left; border-left:1px solid var(--gold); padding-left:20px; margin-bottom:20px;">
+                <p style="font-size:0.85rem; line-height:1.6;">${c.d}</p>
+            </div>
+            <p style="text-transform:uppercase; font-size:0.7rem; color:var(--gold); letter-spacing:2px;">Interrogatorio:</p>
+            <p style="margin-top:5px; font-weight:bold;">${c.q}</p>
+            ${c.o.map((opt, i) => `<button class="opt-btn" onclick="checkAnswer(${id}, ${i})">${opt}</button>`).join('')}
+            <button class="opt-btn martini-btn" onclick="document.getElementById('modal').style.display='none'">Pausa para martini 🍸</button>
+        `;
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function checkAnswer(id, idx) {
+        if(idx === chapters[id-1].a) {
+            if(id === 19) alert("VUELO FINALIZADO. Bienvenido a New York, Operativo.");
+            else alert("Análisis correcto. El avión mantiene el rumbo.");
+            
+            if(id === currentLvl && currentLvl < 19) currentLvl++;
+            renderPath();
+            document.getElementById('modal').style.display = 'none';
+        } else alert("Error de análisis. El objetivo ha detectado su presencia.");
+    }
+</script>
+</body>
+</html>

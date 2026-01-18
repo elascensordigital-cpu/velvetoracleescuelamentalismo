@@ -1,0 +1,22 @@
+{
+  "name": "The Velvet Oracle: 1960 Spy Mission",
+  "short_name": "Velvet Oracle",
+  "description": "Mejora tus habilidades de mentalista en una misión secreta rumbo a NYC.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#020c1b",
+  "theme_color": "#c5a059",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "cabecera.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "cabecera.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
