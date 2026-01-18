@@ -7,16 +7,15 @@
   "background_color": "#020c1b",
   "theme_color": "#c5a059",
   "orientation": "portrait",
-  "icons": [
+"icons": [
     {
-      "src": "cabecera.jpg",
+      "src": "icon.png",
       "sizes": "192x192",
-      "type": "image/jpeg"
+      "type": "image/png"
     },
     {
-      "src": "cabecera.jpg",
+      "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png"
     }
   ]
-}
