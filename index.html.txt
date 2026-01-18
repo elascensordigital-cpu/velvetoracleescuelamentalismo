@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Velvet Oracle | 1960 Spy Mission</title>
+    
+    <link rel="manifest" href="manifest.json?v=2">
+    <link rel="apple-touch-icon" href="icono.jpg?v=2">
+    <meta name="theme-color" content="#c5a059">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="auth-box" id="login-form">
+        <h2 style="color:var(--gold); letter-spacing: 5px;">THE VELVET ORACLE</h2>
+        <p style="font-size: 0.7rem; margin-bottom: 30px;">ESTABLISHED 1964 | LONDON - NYC</p>
+        <input type="text" id="user-input" placeholder="OPERATIVO">
+        <input type="password" id="pass-input" placeholder="PASSCODE">
+        <button class="opt-btn" onclick="requestAccess()">REGISTRAR IDENTIDAD</button>
+    </div>
+    <div class="auth-box" id="verify-form" style="display:none">
+        <h2 style="color:var(--gold)">VERIFICACIÓN</h2>
+        <p style="font-size:0.8rem">Transmisión interceptada. Introduzca el código.</p>
+        <input type="text" id="v-code" placeholder="CÓDIGO: 1960">
+        <button class="opt-btn" onclick="completeAuth()">CONFIRMAR VUELO</button>
+    </div>
+</div>
+
+<div id="game-screen">
+    <div class="stars-bg"></div>
+    <div class="main-mission-control">
+        <h1 style="color:var(--gold); letter-spacing: 8px; font-size: 1.8rem; margin-top: 0;">THE VELVET ORACLE</h1>
+        <div class="agents-frame"></div>
+        <div class="mission-text">
+            <p id="agent-display" style="color: var(--gold); font-weight: bold; text-transform: uppercase;"></p>
+            <p><strong>REPORTE DE VUELO:</strong> Cruzando el Atlántico. Utilice el tiempo de cabina para perfeccionar su análisis de comportamiento. New York no perdona a los aficionados.</p>
+            <button class="opt-btn" style="width:auto; padding: 5px 15px; font-size:0.6rem; border:none; color:#666;" onclick="clearAgencyData()">ELIMINAR CREDENCIALES</button>
+        </div>
+    </div>
+    <div class="flight-itinerary">
+        <div class="path-line" id="path-line">
+            <div id="plane-container"><img src="avion.png" id="plane-img"></div>
+            <div style="position:absolute; right:-50px; top:-45px; font-size:35px; filter: grayscale(1) sepia(1) hue-rotate(10deg);">🗽</div>
+        </div>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content" id="m-body"></div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
