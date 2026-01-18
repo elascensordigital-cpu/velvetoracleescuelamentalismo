@@ -10,6 +10,11 @@
     <meta name="theme-color" content="#c5a059">
 
     <link rel="stylesheet" href="style.css">
+    <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+</script>
 </head>
 <body>
 
@@ -57,3 +62,4 @@
 </body>
 
 </html>
+
